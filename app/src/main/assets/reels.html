@@ -1,0 +1,175 @@
+<html>
+<body>
+<div id="kpoint-reels"
+     data-vx-key=myAppKey
+     data-vx-host=demos.kpoint.com
+     data-vx-type="reels"
+     data-vx-params='{
+            "videoIds": ["gcc-a80e1d84-bc6a-4bc6-aadf-7e483885b793",
+                                  "gcc-525f6919-1640-4c83-96d6-e6160cfee194",
+                                  "gcc-5f5d855a-f116-44cc-82a1-62b2139a3d5a",
+                                  "gcc-8c0f97d6-8285-48a6-95e1-1aabd8f9911f",
+                                  "gcc-aa4e649e-1d82-4b32-bea5-34ba803d4bee",
+                                  "gcc-119c536f-2ea5-4f5a-9486-b79d281fb72a"]
+        }'
+     data-vx-widgets='{
+            "reels": {
+                "list": [
+                    {
+                        "title": true,
+                        "description":true,
+                        "userName": true,
+                        "userAvatar": true,
+                        "like": true,
+                        "share": true,
+                        "comment": true,
+                        "close": true
+                    }
+                ]
+            }
+        }'
+>
+</div>
+
+<script>
+    function onNextPage(currentPlayerIndex) {
+   console.log("Called pagination for ", currentPlayerIndex);
+   let onNextPagePromise = new Promise((resolve,reject) => {
+    console.log("inside first");
+    window["onNextPagePromiseResolve"+currentPlayerIndex] = resolve;
+    console.log("inside second");
+   });
+<!--   window.fab_sdk("onNextPage:"+currentPlayerIndex);-->
+   return onNextPagePromise;
+}
+
+function onNextPageReelsIdsReceived(videoIds, currentPlayerIndex) {
+  console.log("Function called from flutter");
+  window["onNextPagePromiseResolve"+currentPlayerIndex](videoIds);
+}
+
+function getVideoConfig(videoId) {
+    console.log("Get video config called", videoId);
+    let onLikePromise = new Promise((resolve,reject) => {
+    window["getVideoConfigPromiseResolve"+videoId] = resolve;
+    });
+    fab_sdk.onWidgetDetailsReceived(videoId);
+    return onLikePromise;
+}
+
+function onWidgetDetailsReceived(widgetDetails, videoId) {
+  console.log("onWidgetDetailsReceived");
+  var response = {
+       personalizationInfo:
+          widgetDetails,
+  };
+  window["getVideoConfigPromiseResolve"+videoId](response);
+}
+
+
+window.setupVX = function (vxPlayer) {
+    console.log("events =====>");
+    window.reelPlayer = vxPlayer;
+    window.reelPlayer.onNextPage =  onNextPage;
+    window.reelPlayer.getVideoConfig = getVideoConfig;
+
+    vxPlayer.on("slideChange", (index) => {
+    console.log("slideChange", index);
+    fab_sdk.onMessageReceived("onSlideChange:"+index);
+  });
+};
+var videoDetails;
+document.addEventListener("kpw-onclick-button",(event) => {
+  console.log('onLike',event);
+  var {events: details} = event.detail;
+  console.log('Total like count',details.count);
+  console.log('Details = ',JSON.stringify(details));
+  console.log('Liked video ID',details.videoid);
+  console.log('Comment',details.url);
+  videoDetails=details;
+  if(details.url === "like"){
+  //console.log('onLikeTapped',event);
+  console.log('onLikeTapped',details.url);
+  fab_sdk.onLike(details.videoid);
+  }
+  else if(details.url=="comment"){
+  console.log('onCommentTapped',details.url);
+  fab_sdk.onComment(details.videoid);
+  }
+  else if(details.url="share"){
+  fab_sdk.onShare(details.videoid);
+  }
+  console.log("details are===========>",details);
+}
+ );
+
+function onLikeSuccess(){
+console.log("Like Success details are===========>",videoDetails.url);
+var likeSuccessDetails = {
+    url: videoDetails.url,
+    status: "success",
+    count: videoDetails.count+1,
+    videoid: videoDetails.videoid
+  }
+  var actionCompleted = new CustomEvent("kpw-on-actionCompleted",{
+    detail: likeSuccessDetails
+  });
+  document.dispatchEvent(actionCompleted)
+  console.log("Like Success details are===========>",videoDetails);
+}
+function onLikeFailure(){
+console.log("on like failure");
+}
+
+function onCommentSuccess(){
+console.log("on comment success",videoDetails.count);
+videoDetails.count++
+var commentSuccessDetails = {
+    url: videoDetails.url,
+    status: "success",
+    count: parseInt(videoDetails.count),
+    videoid: videoDetails.videoid
+  }
+  var actionCompleted = new CustomEvent("kpw-on-actionCompleted",{
+    detail: commentSuccessDetails
+  });
+  document.dispatchEvent(actionCompleted)
+  console.log("Comment Success details are===========>",videoDetails);
+}
+
+function onShareSuccess(){
+console.log("on share success",videoDetails.count);
+videoDetails.count++
+var shareSuccessDetails = {
+    url: videoDetails.url,
+    status: "success",
+    count: parseInt(videoDetails.count),
+    videoid: videoDetails.videoid
+  }
+  var actionCompleted = new CustomEvent("kpw-on-actionCompleted",{
+    detail: shareSuccessDetails
+  });
+  document.dispatchEvent(actionCompleted)
+  console.log("Share Success details are===========>",videoDetails);
+}
+
+function onCommentFailure(){
+console.log("on comment failure");
+}
+
+function onShareFailure(){
+console.log("on share failure");
+}
+
+function onCustomCallBack(details){
+console.log("on custom callback success");
+}
+
+
+
+</script>
+
+<script type='text/javascript'
+        src='https://assets.zencite.com/orca/media/embed/player-vx.js'></script>
+</body>
+</html>
