@@ -36,7 +36,7 @@ publishing {
     publications {
         maven(MavenPublication) {
             groupId = 'com.github.kPoint-Pvt'
-            artifactId = 'fab.sdk'
+            artifactId = 'fab-sdk-android'
             version = "1.0"
             artifact("$buildDir/outputs/aar/fab_sdk-release.aar")
             pom {
