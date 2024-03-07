@@ -7,8 +7,4 @@
     <version>1.0</version>
     <packaging>aar</packaging>
     <description>First release</description>
-    <repository>
-        <id>jitpack.io</id>
-        <url>https://jitpack.io</url>
-    </repository>
 </project>
