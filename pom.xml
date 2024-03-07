@@ -3,8 +3,12 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.kPoint-Pvt</groupId>
-    <artifactId>fab-android-sdk</artifactId>
+    <artifactId>fab.sdk</artifactId>
     <version>1.0</version>
     <packaging>aar</packaging>
     <description>First release</description>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
 </project>
