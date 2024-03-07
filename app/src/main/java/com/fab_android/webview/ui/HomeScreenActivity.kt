@@ -17,7 +17,7 @@ class HomeScreenActivity : AppCompatActivity() {
     }
 
     fun onReelsClick(view: View) {
-        Intent (this, MainActivity::class.java).also {
+        Intent (this, StoriesActivity::class.java).also {
             startActivity(it)
         }
 //        val reelsExperience = ReelsExperience(this)

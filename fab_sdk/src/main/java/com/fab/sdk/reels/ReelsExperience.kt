@@ -2,7 +2,6 @@ package com.fab.sdk.reels
 
 import android.app.Activity
 import android.content.Context
-import android.os.Build
 import android.os.StrictMode
 import android.util.AttributeSet
 import android.util.Log
@@ -12,8 +11,6 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import com.fab.sdk.constants.AppConstants
 import org.json.JSONObject
-import java.util.Base64
-import java.util.Random
 
 
 class ReelsExperience: WebView {
@@ -28,18 +25,17 @@ class ReelsExperience: WebView {
     private var showLike: Boolean = true
     private var showShare: Boolean = true
     private var showUserName: Boolean = true
-    private var host: String = "demos.kpoint.com"
-    private var appKey: String = "myAppKey"
+    private var host: String = ""
+    private var appKey: String = ""
     private var reelsDetails = ""
     private var reelsExperienceCallback: ReelsExperienceCallback? = null
 
     interface ReelsExperienceCallback {
         fun onNextPage(currentPlayerIndex: Int)
-//        fun onNextPageReelsIdsReceived(videoIds: List<String>, currentPlayerIndex: Int) : String
-        fun onWidgetDetailsReceived(widgets: String) : String
-        fun onLike(like: String) : Boolean
-        fun onComment(comment: String) : Boolean
-        fun onShare(share: String) : Boolean
+        fun onVideoDetailsFetched(widgets: String) : String
+        fun onLikeClicked(like: String) : Boolean
+        fun onCommentClicked(comment: String) : Boolean
+        fun onShareClicked(share: String) : Boolean
         fun onClose(close: String)
     }
 
@@ -60,8 +56,6 @@ class ReelsExperience: WebView {
 
     fun getReelsConfigDetails(reelsExpereinceValues: String) {
         setWebViewValues(reelsExpereinceValues)
-        Log.e("ReelsExperience", "JSON Array :-$reelsExpereinceValues")
-
         reelsView = reelsSource.getReelsView(
             this.reelsDetails,
             this.appKey,
@@ -140,11 +134,6 @@ class ReelsExperience: WebView {
     private fun loadUrlWithParameters(url: String) {
         // Assuming you want to pass parameters via URL, modify as needed
         this.loadDataWithBaseURL("https://assets.zencite.com",url, "text/html", "UTF-8",null)
-//        this.loadUrl("https://ktpl.zencite.com")
-
-    }
-
-    fun updateReelsUI(reelsID: String,activity: Activity) {
     }
 
     fun onNextPage(videoIds: JSONObject, activity: Activity, currentPlayerIndex: Int) {
@@ -195,9 +184,9 @@ class ReelsExperience: WebView {
             // Handle onNextPageStoriesIdsReceived logic
             Log.e("JavascriptInterface", "onLike: $videoIds")
             if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onLike(videoIds)
+                this.reelsExperienceCallback.onLikeClicked(videoIds)
             }
-            if (reelsExperienceCallback?.onLike(videoIds)!!) {
+            if (reelsExperienceCallback?.onLikeClicked(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onLikeSuccess();");
                 }
@@ -212,7 +201,7 @@ class ReelsExperience: WebView {
         @JavascriptInterface
         fun onComment(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            if (reelsExperienceCallback?.onComment(videoIds)!!) {
+            if (reelsExperienceCallback?.onCommentClicked(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onCommentSuccess();");
                 }
@@ -228,8 +217,8 @@ class ReelsExperience: WebView {
         @JavascriptInterface
         fun onShare(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            Log.e("JavascriptInterface", "onShare: ${reelsExperienceCallback?.onShare(videoIds)}")
-            if (!reelsExperienceCallback?.onShare(videoIds)!!) {
+            Log.e("JavascriptInterface", "onShare: ${reelsExperienceCallback?.onShareClicked(videoIds)}")
+            if (!reelsExperienceCallback?.onShareClicked(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onShareFailure();");
                 }
@@ -252,7 +241,7 @@ class ReelsExperience: WebView {
         fun onWidgetDetailsReceived(videoId: String) {
             // Handle onWidgetDetailsReceived logic
             fabWebView.post {
-                fabWebView.loadUrl("javascript:onWidgetDetailsReceived('" + reelsExperienceCallback?.onWidgetDetailsReceived(videoId) + "', '" + videoId + "')");
+                fabWebView.loadUrl("javascript:onWidgetDetailsReceived('" + reelsExperienceCallback?.onVideoDetailsFetched(videoId) + "', '" + videoId + "')");
             }
 
         }

@@ -50,8 +50,6 @@ class StoriesActivity : AppCompatActivity(), StoriesExperience.StoriesExperience
 
         jsonObject.put("host", "demos.kpoint.com")
         jsonObject.put("appKey", "myAppKey")
-
-//        val reelsDetailsArray = JSONArray()
         jsonObject.put("storiesDetails", storiesResponse)
 
         return jsonObject.toString()
@@ -59,43 +57,15 @@ class StoriesActivity : AppCompatActivity(), StoriesExperience.StoriesExperience
 
     override fun onNextPage(currentPlayerIndex: Int) {
         Log.e("TAG", "onNextPage: $currentPlayerIndex")
-        if (currentPlayerIndex == 2) {
-            storiesExperience?.updateReelsUI(storiesResponse)
-        }
+        storiesExperience?.onNextPage(storiesResponse,this, currentPlayerIndex)
     }
 
-    override fun onNextPageReelsIdsReceived(videoIds: List<String>, currentPlayerIndex: Int) {
-        Log.e("TAG", "onNextPageReelsIdsReceived: $currentPlayerIndex")
-    }
-
-    override fun onReelsViewError(error: String) {
-        Log.e("TAG", "onReelsViewError: $error")
-    }
-
-    override fun onWidgetDetailsReceived(widgets: String) {
-        Log.e("TAG", "onWidgetDetailsReceived: $widgets")
-    }
-
-    override fun onLike(like: String) {
-        Log.e("TAG Demo", "onLike: $like")
-        storiesExperience?.updateReelsUI(like)
-    }
-
-    override fun onComment(comment: String) {
-        Log.e("TAG", "onComment: $comment")
-    }
-
-    override fun onShare(share: String) {
-        Log.e("TAG", "onShare: $share")
+    override fun onVideoDetailsFetched(widgets: String) {
     }
 
     override fun onClose(close: String) {
         Log.e("TAG", "Stories Activity onClose: $close")
 
-    }
-
-    override fun getConfigDetails(config: String) {
-        Log.e("TAG", "getConfigDetails: $config")
     }
 
 }

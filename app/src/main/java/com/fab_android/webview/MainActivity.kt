@@ -70,22 +70,22 @@ class MainActivity : AppCompatActivity(), ReelsExperience.ReelsExperienceCallbac
         reelsExperience?.onNextPage(reelsDetailsArray,this,currentPlayerIndex)
     }
 
-    override fun onWidgetDetailsReceived(videoId: String) : String {
+    override fun onVideoDetailsFetched(videoId: String) : String {
         return getBase64ConvertedString(videoId);
     }
 
     // onLikeClicked
-    override fun onLike(like: String) : Boolean {
+    override fun onLikeClicked(like: String) : Boolean {
         Log.e("TAG Demo", "onLike: $like")
         return  false;
     }
     // onCommentClicked
-    override fun onComment(comment: String) : Boolean {
+    override fun onCommentClicked(comment: String) : Boolean {
         Log.e("TAG", "onComment: $comment")
         return false;
     }
 
-    override fun onShare(share: String) : Boolean {
+    override fun onShareClicked(share: String) : Boolean {
         Log.e("TAG", "onShare: $share")
         return false;
     }

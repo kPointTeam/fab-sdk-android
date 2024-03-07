@@ -1,5 +1,6 @@
 package com.fab.sdk.stories
 
+import android.app.Activity
 import android.content.Context
 import android.os.Build
 import android.os.StrictMode
@@ -9,6 +10,7 @@ import android.webkit.JavascriptInterface
 import android.webkit.WebChromeClient
 import android.webkit.WebSettings
 import android.webkit.WebView
+import com.fab.sdk.constants.AppConstants
 import org.json.JSONObject
 import java.util.Base64
 import java.util.Random
@@ -39,14 +41,8 @@ class StoriesExperience : WebView {
 
     interface StoriesExperienceCallback {
         fun onNextPage(currentPlayerIndex: Int)
-        fun onNextPageReelsIdsReceived(videoIds: List<String>, currentPlayerIndex: Int)
-        fun onReelsViewError(error: String)
-        fun onWidgetDetailsReceived(widgets: String)
-        fun onLike(like: String)
-        fun onComment(comment: String)
-        fun onShare(share: String)
+        fun onVideoDetailsFetched(widgets: String)
         fun onClose(close: String)
-        fun getConfigDetails(config: String)
     }
 
     constructor(context: Context) : super(context) {
@@ -133,11 +129,11 @@ class StoriesExperience : WebView {
         // Assuming you want to pass parameters via URL, modify as needed
         this.loadDataWithBaseURL("https://assets.zencite.com",_storiesView, "text/html", "UTF-8",null)
     }
-
-    fun updateReelsUI(like: String) {
-        Log.e("TAG", "updateReelsUI: $like")
-//        this.loadUrl("runJavaScript:onLikeSuccess()")
-        this.evaluateJavascript("onNextPageReelsIdsReceived($like, 3);", null)
+    fun onNextPage(storiesDetails : String, activity: Activity, currentPlayerIndex: Int) {
+        activity.runOnUiThread {
+            this.evaluateJavascript("onNextPageReelsIdsReceived(${storiesDetails}, $currentPlayerIndex);"){
+            }
+        }
     }
 
     // Class for JavaScript interface
@@ -172,14 +168,9 @@ class StoriesExperience : WebView {
         @JavascriptInterface
         fun onLike(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            Log.e("TAG", "onLike: $videoIds")
-            Log.e("TAG", "reelsExperienceCallback: $reelsExperienceCallback")
-            if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onLike(videoIds)
-            }
-            fabWebView.post {
-                fabWebView.loadUrl("javascript:onLikeSuccess();");
-            }
+//            fabWebView.post {
+//                fabWebView.loadUrl("javascript:onLikeSuccess();");
+//            }
         }
         @JavascriptInterface
         fun onComment(videoIds: String) {
@@ -211,26 +202,12 @@ class StoriesExperience : WebView {
         @JavascriptInterface
         fun onWidgetDetailsReceived(videoId: String) {
             // Handle onWidgetDetailsReceived logic
-            Log.e("TAG", "onWidgetDetailsReceived: "+getBase64ConvertedString(videoId))
             fabWebView.post {
-                fabWebView.loadUrl("javascript:onWidgetDetailsReceived('" + getBase64ConvertedString(videoId) + "', '" + videoId + "')");
+                fabWebView.loadUrl("javascript:onWidgetDetailsReceived('" + reelsExperienceCallback?.onVideoDetailsFetched(videoId) + "', '" + videoId + "')");
             }
-
-        }
-
-        private fun getBase64ConvertedString(videoId: String): String {
-            // Generate random number
-            val likeCount = Random().nextInt(100).toString()
-            val commentCount = Random().nextInt(100).toString()
-            val shareCount = Random().nextInt(100).toString()
-            val videoDetails =
-                "likeCount:$likeCount;commentCount:$commentCount;shareCount:$shareCount;kpwVideoId:$videoId"
-            // Function converts string into base 64 format
-            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                Base64.getEncoder().encodeToString(videoDetails.toByteArray())
-            } else {
-                TODO("VERSION.SDK_INT < O")
-            }
+//            fabWebView.post {
+//                fabWebView.loadUrl("javascript:onWidgetDetailsReceived('" + getBase64ConvertedString(videoId) + "', '" + videoId + "')");
+//            }
 
         }
     }
