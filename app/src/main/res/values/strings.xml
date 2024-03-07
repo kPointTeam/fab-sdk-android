@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">WebViewExample</string>
+    <string name="app_name">FAB</string>
     <string name="title_activity_stories">StoriesActivity</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

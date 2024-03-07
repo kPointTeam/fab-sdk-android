@@ -16,6 +16,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "WebViewExample"
+rootProject.name = "FAB"
 include(":app")
 include(":fab_sdk")
