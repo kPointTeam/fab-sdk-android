@@ -1,5 +1,6 @@
 package com.fab.sdk.reels
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.os.StrictMode
@@ -54,8 +55,8 @@ class ReelsExperience: WebView {
         return "[\"$listString\"]"
     }
 
-    fun getReelsConfigDetails(reelsExpereinceValues: String) {
-        setWebViewValues(reelsExpereinceValues)
+    fun getReelsConfigDetails(reelsExperienceValues: String) {
+        setWebViewValues(reelsExperienceValues)
         reelsView = reelsSource.getReelsView(
             this.reelsDetails,
             this.appKey,
@@ -112,6 +113,7 @@ class ReelsExperience: WebView {
         appKey = jsonObject.getString(AppConstants.appKey)
     }
 
+    @SuppressLint("SetJavaScriptEnabled")
     private fun setupWebView(reels_view: String) {
         val webSettings: WebSettings = this.settings
         webSettings.javaScriptEnabled = true  // Enable JavaScript
@@ -182,10 +184,6 @@ class ReelsExperience: WebView {
         @JavascriptInterface
         fun onLike(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            Log.e("JavascriptInterface", "onLike: $videoIds")
-            if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onLikeButtonPressed(videoIds)
-            }
             if (reelsExperienceCallback?.onLikeButtonPressed(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onLikeSuccess();");
