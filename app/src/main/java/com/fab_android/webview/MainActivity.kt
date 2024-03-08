@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), ReelsExperience.ReelsExperienceCallbac
         return jsonObject.toString()
     }
 
-    override fun onNextPage(currentPlayerIndex: Int) {
+    override fun loadNextPage(currentPlayerIndex: Int) {
         val reelsNextVideosIdsArray = JSONObject()
         reelsNextVideosIdsArray.put(AppConstants.reelsIds, this.reelsDetailsArray)
         reelsExperience?.onNextPage(reelsNextVideosIdsArray,this,currentPlayerIndex)
@@ -73,18 +73,18 @@ class MainActivity : AppCompatActivity(), ReelsExperience.ReelsExperienceCallbac
         return getBase64ConvertedString(videoId);
     }
 
-    override fun onLikeClicked(like: String) : Boolean {
+    override fun onLikeButtonPressed(like: String) : Boolean {
         return  false;
     }
-    override fun onCommentClicked(comment: String) : Boolean {
+    override fun onCommentButtonPressed(comment: String) : Boolean {
         return false;
     }
 
-    override fun onShareClicked(share: String) : Boolean {
+    override fun onShareButtonPressed(share: String) : Boolean {
         return false;
     }
 
-    override fun onClose(close: String) {
+    override fun closeReelsExperience(close: String) {
         //Close the reels experience activity and go back to the previous activity
         this.finish()
     }

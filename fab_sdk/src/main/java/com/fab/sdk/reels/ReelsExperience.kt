@@ -31,12 +31,12 @@ class ReelsExperience: WebView {
     private var reelsExperienceCallback: ReelsExperienceCallback? = null
 
     interface ReelsExperienceCallback {
-        fun onNextPage(currentPlayerIndex: Int)
+        fun loadNextPage(currentPlayerIndex: Int)
         fun onVideoDetailsFetched(widgets: String) : String
-        fun onLikeClicked(like: String) : Boolean
-        fun onCommentClicked(comment: String) : Boolean
-        fun onShareClicked(share: String) : Boolean
-        fun onClose(close: String)
+        fun onLikeButtonPressed(like: String) : Boolean
+        fun onCommentButtonPressed(comment: String) : Boolean
+        fun onShareButtonPressed(share: String) : Boolean
+        fun closeReelsExperience(close: String)
     }
 
     constructor(context: Context) : super(context)
@@ -161,7 +161,7 @@ class ReelsExperience: WebView {
         fun onClose(result: String) {
             // Handle the JavaScript message in Kotlin
             if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onClose(result)
+                this.reelsExperienceCallback.closeReelsExperience(result)
             }
         }
 
@@ -175,7 +175,7 @@ class ReelsExperience: WebView {
         fun onNextPage(currentPlayerIndex: Int) {
             // Handle onNextPage logic
             if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onNextPage(currentPlayerIndex)
+                this.reelsExperienceCallback.loadNextPage(currentPlayerIndex)
             }
         }
 
@@ -184,9 +184,9 @@ class ReelsExperience: WebView {
             // Handle onNextPageStoriesIdsReceived logic
             Log.e("JavascriptInterface", "onLike: $videoIds")
             if (this.reelsExperienceCallback != null) {
-                this.reelsExperienceCallback.onLikeClicked(videoIds)
+                this.reelsExperienceCallback.onLikeButtonPressed(videoIds)
             }
-            if (reelsExperienceCallback?.onLikeClicked(videoIds)!!) {
+            if (reelsExperienceCallback?.onLikeButtonPressed(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onLikeSuccess();");
                 }
@@ -201,7 +201,7 @@ class ReelsExperience: WebView {
         @JavascriptInterface
         fun onComment(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            if (reelsExperienceCallback?.onCommentClicked(videoIds)!!) {
+            if (reelsExperienceCallback?.onCommentButtonPressed(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onCommentSuccess();");
                 }
@@ -217,8 +217,8 @@ class ReelsExperience: WebView {
         @JavascriptInterface
         fun onShare(videoIds: String) {
             // Handle onNextPageStoriesIdsReceived logic
-            Log.e("JavascriptInterface", "onShare: ${reelsExperienceCallback?.onShareClicked(videoIds)}")
-            if (!reelsExperienceCallback?.onShareClicked(videoIds)!!) {
+            Log.e("JavascriptInterface", "onShare: ${reelsExperienceCallback?.onShareButtonPressed(videoIds)}")
+            if (!reelsExperienceCallback?.onShareButtonPressed(videoIds)!!) {
                 fabWebView.post {
                     fabWebView.loadUrl("javascript:onShareFailure();");
                 }
