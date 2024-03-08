@@ -2,7 +2,6 @@ package com.fab_android.webview
 
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.example.webview.R
 import com.fab.sdk.constants.AppConstants
@@ -64,29 +63,24 @@ class MainActivity : AppCompatActivity(), ReelsExperience.ReelsExperienceCallbac
     }
 
     override fun onNextPage(currentPlayerIndex: Int) {
-//        Log.e("TAG", " Main Activity:->onNextPage: $currentPlayerIndex")
-        val reelsDetailsArray = JSONObject()
-        reelsDetailsArray.put(AppConstants.reelsIds, this.reelsDetailsArrayNew)
-        reelsExperience?.onNextPage(reelsDetailsArray,this,currentPlayerIndex)
+        val reelsNextVideosIdsArray = JSONObject()
+        reelsNextVideosIdsArray.put(AppConstants.reelsIds, this.reelsDetailsArray)
+        reelsExperience?.onNextPage(reelsNextVideosIdsArray,this,currentPlayerIndex)
     }
 
     override fun onVideoDetailsFetched(videoId: String) : String {
+        // Function converts string into base 64 format
         return getBase64ConvertedString(videoId);
     }
 
-    // onLikeClicked
     override fun onLikeClicked(like: String) : Boolean {
-        Log.e("TAG Demo", "onLike: $like")
         return  false;
     }
-    // onCommentClicked
     override fun onCommentClicked(comment: String) : Boolean {
-        Log.e("TAG", "onComment: $comment")
         return false;
     }
 
     override fun onShareClicked(share: String) : Boolean {
-        Log.e("TAG", "onShare: $share")
         return false;
     }
 
